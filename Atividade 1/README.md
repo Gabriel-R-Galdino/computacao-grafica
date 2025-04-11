@@ -13,6 +13,8 @@ O objetivo é processar uma imagem no formato `.ppm` e gerar três versões:
 
 ```
 .
+├── build/              # Pasta que Armazena o Executável
+│   └── Main            # Executável
 ├── img/                # Imagens de entrada e saída
 │   └── arco-iris.ppm   # Imagem usada como teste
 ├── src/                # Códigos-fonte (.c)
