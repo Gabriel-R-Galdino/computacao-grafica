@@ -63,7 +63,7 @@ O objetivo é processar uma imagem no formato `.ppm` e gerar três versões:
 5. **Informe o caminho da imagem** quando solicitado:
 
    ```bash
-   Digite o nome da imagem .ppm: ../img/arco-iris.ppm
+   Digite o nome da imagem .ppm: arco-iris.ppm
    ```
 
 6. **Verifique a pasta `img/`** para os arquivos de saída:
@@ -77,7 +77,7 @@ O objetivo é processar uma imagem no formato `.ppm` e gerar três versões:
 
 - A imagem `.ppm` deve estar dentro da pasta `img/` caso queira adicionar novas imagens.
 - As imagens de saída também serão salvas dentro da pasta `img/`.
-- Ao executar o programa, informe o caminho relativo como: `../img/Nome_Da_Imagem.ppm`
+- Ao executar o programa, informe o caminho relativo como: `Nome_Da_Imagem.ppm`
 
 ---
 

@@ -70,7 +70,7 @@ int carregar_imagem(void) {
 
 void gerar_media_simples(void) {
     char nome_saida[200];
-    snprintf(nome_saida, sizeof(nome_saida), "%s_1.pgm", nome_base);
+    snprintf(nome_saida, sizeof(nome_saida), "img/%s_1.pgm", nome_base);
     FILE *fp = fopen(nome_saida, "w");
     fprintf(fp, "P2\n%d %d\n%d\n", ncol, nlin, quantizacao);
 
@@ -87,7 +87,7 @@ void gerar_media_simples(void) {
 
 void gerar_media_ponderada(void) {
     char nome_saida[200];
-    snprintf(nome_saida, sizeof(nome_saida), "%s_2.pgm", nome_base);
+    snprintf(nome_saida, sizeof(nome_saida), "img/%s_2.pgm", nome_base);
     FILE *fp = fopen(nome_saida, "w");
     fprintf(fp, "P2\n%d %d\n%d\n", ncol, nlin, quantizacao);
 
@@ -104,7 +104,7 @@ void gerar_media_ponderada(void) {
 
 void gerar_negativo(void) {
     char nome_saida[200];
-    snprintf(nome_saida, sizeof(nome_saida), "%s_3.ppm", nome_base);
+    snprintf(nome_saida, sizeof(nome_saida), "img/%s_3.ppm", nome_base);
     FILE *fp = fopen(nome_saida, "w");
     fprintf(fp, "P3\n%d %d\n%d\n", ncol, nlin, quantizacao);
 
