@@ -48,7 +48,10 @@ int carregar_imagem(void) {
     printf("Digite o nome da imagem .ppm: ");
     scanf("%s", nome_entrada);
 
-    fpin = fopen(nome_entrada, "r");
+    char caminho_completo[150];
+    snprintf(caminho_completo, sizeof(caminho_completo), "img/%s", nome_entrada);
+
+    fpin = fopen(caminho_completo, "r");
     if (!fpin) {
         printf("Erro ao abrir imagem.\n");
         return 0;
@@ -67,7 +70,7 @@ int carregar_imagem(void) {
 
 void gerar_media_simples(void) {
     char nome_saida[200];
-    snprintf(nome_saida, sizeof(nome_saida), "img/%s_1.pgm", nome_base);
+    snprintf(nome_saida, sizeof(nome_saida), "%s_1.pgm", nome_base);
     FILE *fp = fopen(nome_saida, "w");
     fprintf(fp, "P2\n%d %d\n%d\n", ncol, nlin, quantizacao);
 
@@ -84,7 +87,7 @@ void gerar_media_simples(void) {
 
 void gerar_media_ponderada(void) {
     char nome_saida[200];
-    snprintf(nome_saida, sizeof(nome_saida), "img/%s_2.pgm", nome_base);
+    snprintf(nome_saida, sizeof(nome_saida), "%s_2.pgm", nome_base);
     FILE *fp = fopen(nome_saida, "w");
     fprintf(fp, "P2\n%d %d\n%d\n", ncol, nlin, quantizacao);
 
@@ -101,7 +104,7 @@ void gerar_media_ponderada(void) {
 
 void gerar_negativo(void) {
     char nome_saida[200];
-    snprintf(nome_saida, sizeof(nome_saida), "img/%s_3.ppm", nome_base);
+    snprintf(nome_saida, sizeof(nome_saida), "%s_3.ppm", nome_base);
     FILE *fp = fopen(nome_saida, "w");
     fprintf(fp, "P3\n%d %d\n%d\n", ncol, nlin, quantizacao);
 
