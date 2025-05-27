@@ -1,3 +1,4 @@
+// Autor: Gabriel Rosa Galdino - Atividade 2 - Computação Gráfica
 #include <GL/glut.h>
 #include <math.h>
 #include <stdlib.h>
@@ -8,23 +9,39 @@
 #endif
 
 int R = 255, G = 165, B = 0;
-int R_Asa = 25.5, G_Asa = 178.5, B_Asa = 76.5;
+float R_Asa = 25.5, G_Asa = 178.5, B_Asa = 76.5;
 int backgroundColor = 0;
 GLubyte textoR = 255, textoG = 255, textoB = 255;
 char *titulo = "Dragonite";
 
+
+void DesenhaCirculo(float x, float y, float radius, int segments, int filled, int outlined);
+void DesenhaElipse(float x, float y, float rx, float ry, int segments, int filled);
+void DesenhaArcHorizontal(float x, float y, float rx, float ry, int segments);
+void DesenhaBarriga(void);
+void DesenhaAsa(int lado);
+void DesenhaBraco(int lado);
+void DesenhaPerna(int lado);
+void DesenhaCalda(void);
+void DesenhaCabeca(void);
+void DesenhaPokemon(void);
+void DesenhaPokemonEscalado(void);
+void DesenhaCenario(void);
+void reshape(int w, int h);
+void init(void);
+void DesenhaTexto(char *string);
 void display(void);
 void keyboard(unsigned char key, int x, int y);
 void specialKeyboard(int key, int x, int y);
-void DesenhaTexto(char *string);
 void DesenhaPokemon(void);
 
 // Função para desenhar círculo preenchido
 void DesenhaCirculo(float x, float y, float radius, int segments, int filled, int outlined) {
     if (filled) {
+        float angleIncrement = 2.0f * M_PI / segments;
         glBegin(GL_POLYGON);
         for (int i = 0; i < segments; i++) {
-            float theta = 2.0f * 3.1415926f * i / segments;
+            float theta = angleIncrement * i;
             float dx = radius * cosf(theta);
             float dy = radius * sinf(theta);
             glVertex2f(x + dx, y + dy);
@@ -34,8 +51,9 @@ void DesenhaCirculo(float x, float y, float radius, int segments, int filled, in
 
     if (outlined) {
         glBegin(GL_LINE_LOOP);
+        float angleIncrement = 2.0f * M_PI / segments;
         for (int i = 0; i < segments; i++) {
-            float theta = 2.0f * 3.1415926f * i / segments;
+            float theta = angleIncrement * i;
             float dx = radius * cosf(theta);
             float dy = radius * sinf(theta);
             glVertex2f(x + dx, y + dy);
@@ -48,8 +66,9 @@ void DesenhaElipse(float x, float y, float rx, float ry, int segments, int fille
     if (filled) glBegin(GL_POLYGON);
     else glBegin(GL_LINE_LOOP);
 
+    float angleIncrement = 2.0f * M_PI / segments;
     for (int i = 0; i < segments; i++) {
-        float theta = 2.0f * M_PI * i / segments;
+        float theta = angleIncrement * i;;
         float dx = rx * cosf(theta);
         float dy = ry * sinf(theta);
         glVertex2f(x + dx, y + dy);
