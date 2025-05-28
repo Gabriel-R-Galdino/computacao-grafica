@@ -1,4 +1,4 @@
-# 🖼️ Atividade 2 – Computação Gráfica
+# 🐉 Atividade 2 – Computação Gráfica
 
 Projeto da disciplina de **Computação Gráfica** – Atividade 2.  
 O objetivo é desenhar um pokemon com `OpenGl`.
@@ -13,7 +13,7 @@ Pokemon Escolhido: Dragonite
 ├── build/     # Pasta que Armazena o Executável
 │   └── Main   # Executável
 ├── Main.c     # Arquivo Main
-│   
+│
 ├── Makefile
 └── README.md
 ```
@@ -51,6 +51,16 @@ Pokemon Escolhido: Dragonite
    ```bash
    make run
    ```
+
+---
+
+### 🎨 Alterar Aparência
+
+| Tecla    | Ação                          |
+| -------- | ----------------------------- |
+| `t`      | Ativa modo Shiny              |
+| `y`      | Ativa modo Normal             |
+| `Espaço` | Alterna fundo preto ou branco |
 
 ---
 
