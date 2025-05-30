@@ -109,6 +109,14 @@ make run
 
 ---
 
+### 💃🏾 Dancinha
+
+| Tecla | Ação                          |
+| ----- | ----------------------------- |
+| `p`   | Mexer a barriga na horizontal |
+
+---
+
 ## ✨ Funcionalidades Extras
 
 - 🦵 Pernas possuem animação de subir/descer simulando caminhada.

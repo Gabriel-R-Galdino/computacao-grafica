@@ -68,6 +68,10 @@ float rotMaoEsq = 0.0f;
 float rotOmbroDir = 0.0f;
 float rotCotoveloDir = 0.0f;
 float rotMaoDir = 0.0f;
+// Rebolado da barriga
+float animacaoRebolado = 0.0f;
+int direcaoRebolado = 1;
+int ativarRebolado = 0;
 
 // Prototipos das funcoes
 void DesenhaCirculo(float x, float y, float radius, int segments, int filled, int outlined);
@@ -149,6 +153,8 @@ void DesenhaArcHorizontal(float x, float y, float rx, float ry, int segments) {
 }
 
 void DesenhaBarriga() {
+    glPushMatrix();
+    glTranslatef(animacaoRebolado, 0.0f, 0.0f);
     // Cor do corpo parte externa
     glColor3f(R / 255.0f, G / 255.0f, B/ 255.0f);
     DesenhaElipse(0.0f, -0.5f, 0.3f, 0.55f, 100, 1);
@@ -193,6 +199,7 @@ void DesenhaBarriga() {
     for (int i = 0; i < totalStripes; i++) {
         DesenhaArcHorizontal(0.0f, yBase + i * yStep, 0.18f, 0.05f, 50);
     }
+    glPopMatrix();
 }
 
 void DesenhaAsa(int lado) {
@@ -596,6 +603,16 @@ void display(void) {
     AtualizaChifre();
     AtualizaCabeca();
 
+     // Rebolado
+    if (ativarRebolado) {
+        animacaoRebolado += direcaoRebolado * 0.002f;
+        if (animacaoRebolado > 0.04f || animacaoRebolado < -0.04f) {
+            direcaoRebolado *= -1;
+        }
+    } else {
+        animacaoRebolado = 0.0f;  // reseta se estiver desligado
+    }
+
     glPushMatrix();
     glScalef(0.8f, 0.8f, 0.8f);
 
@@ -689,6 +706,9 @@ void keyboard(unsigned char key, int x, int y) {
             rotOmbroEsq -= 5.0f;
             rotOmbroEsq = clamp(rotOmbroEsq, OMBRO_MIN, OMBRO_MAX);
             break;
+        case 'p': // Ativa/desativa rebolado
+            ativarRebolado = !ativarRebolado;
+            break;
     }
 }
 
@@ -779,6 +799,9 @@ void AtualizaAnimacao() {
     if (animacaoCauda > 0.03f || animacaoCauda < -0.03f) {
         direcaoCauda *= -1;
     }
+
+       
+
 }
 
 void AtualizaPiscar() {
