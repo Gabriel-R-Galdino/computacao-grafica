@@ -96,6 +96,7 @@ void AtualizaAnimacao(void);
 void AtualizaPiscar(void);
 void AtualizaChifre(void);
 void AtualizaCabeca(void);
+void Dancinha(void);
 float clamp(float valor, float min, float max);
 
 // Função para desenhar círculo preenchido
@@ -602,17 +603,8 @@ void display(void) {
     AtualizaPiscar();       // Piscar automático
     AtualizaChifre();
     AtualizaCabeca();
-
-     // Rebolado
-    if (ativarRebolado) {
-        animacaoRebolado += direcaoRebolado * 0.002f;
-        if (animacaoRebolado > 0.04f || animacaoRebolado < -0.04f) {
-            direcaoRebolado *= -1;
-        }
-    } else {
-        animacaoRebolado = 0.0f;  // reseta se estiver desligado
-    }
-
+    Dancinha();         // Animação de rebolado
+    
     glPushMatrix();
     glScalef(0.8f, 0.8f, 0.8f);
 
@@ -799,9 +791,18 @@ void AtualizaAnimacao() {
     if (animacaoCauda > 0.03f || animacaoCauda < -0.03f) {
         direcaoCauda *= -1;
     }
+}
 
-       
-
+void Dancinha() {
+    // Animação de dancinha
+    if (ativarRebolado) {
+        animacaoRebolado += direcaoRebolado * 0.005f;
+        if (animacaoRebolado > 0.04f || animacaoRebolado < -0.04f) {
+            direcaoRebolado *= -1;
+        }
+    } else {
+        animacaoRebolado = 0.0f;  // reseta se estiver desligado
+    }
 }
 
 void AtualizaPiscar() {
