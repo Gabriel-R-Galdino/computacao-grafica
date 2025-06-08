@@ -1060,11 +1060,11 @@ void ResetarPosicao() {
     // Reset dos ângulos dos braços
     rotOmbroDir = 0.0f;
     rotCotoveloDir = 0.0f;
-    rotMaoDir = 90.0f; // Posição neutra
+    rotMaoDir = 90.0f; 
     
     rotOmbroEsq = 0.0f;
     rotCotoveloEsq = 0.0f;
-    rotMaoEsq = 90.0f; // Posição neutra
+    rotMaoEsq = 90.0f; 
     
     // Reset das animações
     animacaoRebolado = 0.0f;
