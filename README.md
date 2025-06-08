@@ -7,3 +7,4 @@ Aqui estão todos os projetos feitos na disciplina de **Computação Gráfica**.
 - [Atividade 1](https://github.com/Gabriel-R-Galdino/computacao-grafica/tree/main/Atividade%201)
 - [Atividade 2](https://github.com/Gabriel-R-Galdino/computacao-grafica/tree/main/Atividade%202)
 - [Atividade 3](https://github.com/Gabriel-R-Galdino/computacao-grafica/tree/main/Atividade%203)
+- [Atividade 6](https://github.com/Gabriel-R-Galdino/computacao-grafica/tree/main/Atividade%204)
