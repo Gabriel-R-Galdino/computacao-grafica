@@ -1,5 +1,5 @@
-// Autor: Gabriel Rosa Galdino - Atividade 3 - Computação Gráfica
-// Data: 27/05/2025
+// Autor: Gabriel Rosa Galdino - Atividade 6 - Computação Gráfica
+// Data: 13/06/2025
 #include <GL/glut.h>
 #include <math.h>
 #include <stdlib.h>
