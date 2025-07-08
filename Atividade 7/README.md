@@ -9,9 +9,9 @@ O objetivo é desenvolver uma **Torre 3D dos Vingadores**, utilizando **OpenGL (
 
 ```
 .
+├── build/       # Pasta que armazena o executável
+│   └── main     # Arquivo executável
 ├── main.c       # Código-fonte principal
-├── build/       # Pasta onde o executável pode ser salvo
-│   └── main     # Executável gerado (opcional)
 ├── Makefile     # Script de compilação
 └── README.md    # Instruções do projeto
 ```
