@@ -1,5 +1,5 @@
 // Autor: Gabriel Rosa Galdino - Atividade 7 - Computação Gráfica
-// Data: 08/07/2025
+// Data: 08/07/2025 // Alterações: 15/07/2025
 #include <GL/glut.h>
 #include <stdlib.h>
 #include <math.h>
@@ -15,13 +15,17 @@ float angulo = 0.0;
 float raioCamera = 7.0; // distância da câmera
 float alturaCamera = 2.0;
 
-void DesenharEixos();
+void DesenhaCirculo(float x, float y, float z, float radius, int segments, int filled, int outlined);
+void DesenhaCirculoHorizontal(float x, float y, float z, float radius, int segments, int filled, int outlined);
+void DesenharCilindro(float raio, float altura, int fatias);
+void DesenharCilindroDiagonal(float raio, float altura, int fatias, float offsetX, float offsetY, float offsetZ);
+void DesenharChao();
 void TorreBase();
 void TorreGrades(float zProfundidade);
 void Plataforma();
 void TopoInclinado();
 void DesenharTorre();
-void DesenharGradesTriangulo(float zFrente);
+void DesenharGradesTriangulo(float zFrente,float deslocamentoY);
 void DesenharLogoAvengers(float xOffset, float yOffset, float zOffset, float escala);
 void EscreverTexto(float x, float y, float z, const char* texto);
 void ArrastarMouse(int x, int y);
@@ -30,24 +34,57 @@ void TeclaEspecial(int key, int x, int y);
 void Mouse(int botao, int estado, int x, int y);
 void IniciarCamera();
 
-// Eixos cartesianos
-void DesenharEixos() {
-    glBegin(GL_LINES);
-    // Eixo X - azul
-    glColor3f(0.0f, 0.0f, 1.0f);
-    glVertex3f(0.0f, 0.0f, 0.0f);
-    glVertex3f(1.0f, 0.0f, 0.0f);
+// Função para desenhar círculo preenchido
+void DesenhaCirculo(float x, float y, float z, float radius, int segments, int filled, int outlined) {
+    float angleIncrement = 2.0f * M_PI / segments;
 
-    // Eixo Y - vermelho
-    glColor3f(1.0f, 0.0f, 0.0f);
-    glVertex3f(0.0f, 0.0f, 0.0f);
-    glVertex3f(0.0f, 1.5f, 0.0f);
+    if (filled) {
+        glBegin(GL_POLYGON);
+        for (int i = 0; i < segments; i++) {
+            float theta = angleIncrement * i;
+            float dx = radius * cosf(theta);
+            float dy = radius * sinf(theta);
+            glVertex3f(x + dx, y + dy, z);
+        }
+        glEnd();
+    }
 
-    // Eixo Z - verde
-    glColor3f(0.0f, 1.0f, 0.0f);
-    glVertex3f(0.0f, 0.0f, 0.0f);
-    glVertex3f(0.0f, 0.0f, 1.0f);
-    glEnd();
+    if (outlined) {
+        glBegin(GL_LINE_LOOP);
+        for (int i = 0; i < segments; i++) {
+            float theta = angleIncrement * i;
+            float dx = radius * cosf(theta);
+            float dy = radius * sinf(theta);
+            glVertex3f(x + dx, y + dy, z);
+        }
+        glEnd();
+    }
+}
+
+void DesenhaCirculoHorizontal(float x, float y, float z, float radius, int segments, int filled, int outlined) {
+    float angleIncrement = 2.0f * M_PI / segments;
+
+    if (filled) {
+        glBegin(GL_POLYGON);
+        for (int i = 0; i < segments; i++) {
+            float theta = angleIncrement * i;
+            float dx = radius * cosf(theta);
+            float dz = radius * sinf(theta);
+            glVertex3f(x + dx, y, z + dz); // y constante, varia x e z
+        }
+        glEnd();
+    }
+
+    if (outlined) {
+        glBegin(GL_LINE_LOOP);
+        for (int i = 0; i < segments; i++) {
+            float theta = angleIncrement * i;
+            float dx = radius * cosf(theta);
+            float dz = radius * sinf(theta);
+            glVertex3f(x + dx, y, z + dz); // y constante, varia x e z
+        }
+        glEnd();
+    }
 }
 
 // Grades diagonais (amarelas)
@@ -64,6 +101,151 @@ void TorreGrades(float zProfundidade) {
     }
 }
 
+void DesenharGradesTriangulo(float zFrente, float deslocamentoY) {
+    int n = 18;
+    float zGrades = zFrente + 0.002f;
+
+    // Altura e largura máxima do triângulo
+    float altura = 2.5f;
+    float larguraBase = 1.9f;
+
+    for (int i = 0; i < n; i++) {
+        // y variando entre 0 + deslocamento até 2.5 + deslocamento (altura do triângulo)
+        float y = i * (altura / n) + deslocamentoY;
+
+        float yRelativo = y - deslocamentoY; // sem deslocamento
+        float xMax = larguraBase * (1.0f - (yRelativo / altura));
+
+        // Largura da faixa da grade: pode ser uma fração de xMax
+        float largura = xMax * 0.8f;
+        float x1 = xMax - largura;
+
+        // Alterna cor para dar o efeito de grade
+        if (i % 2 == 0)
+            glColor3f(1.0f, 1.0f, 0.4f); // amarelo
+        else
+            glColor3f(0.6f, 0.6f, 0.6f); // cinza
+
+        glBegin(GL_QUADS);
+        glVertex3f(x1, y - 0.03f, zGrades);
+        glVertex3f(xMax, y - 0.03f, zGrades);
+        glVertex3f(xMax, y + 0.03f, zGrades);
+        glVertex3f(x1, y + 0.03f, zGrades);
+        glEnd();
+    }
+}
+
+void DesenharCilindro(float raio, float altura, int fatias) {
+    float anguloIncremento = 2.0f * 3.14159265f / fatias;
+
+    // Desenha base inferior (círculo em z=0)
+    glBegin(GL_TRIANGLE_FAN);
+    glColor3f(0.7f, 0.7f, 0.7f); // cinza
+    glVertex3f(0.0f, 0.0f, 0.0f); // centro da base
+    for (int i = 0; i <= fatias; i++) {
+        float angulo = i * anguloIncremento;
+        float x = raio * cos(angulo);
+        float y = raio * sin(angulo);
+        glVertex3f(x, y, 0.0f);
+    }
+    glEnd();
+
+    // Desenha base superior (círculo em z=altura)
+    glBegin(GL_TRIANGLE_FAN);
+    glVertex3f(0.0f, 0.0f, altura); // centro topo
+    for (int i = 0; i <= fatias; i++) {
+        float angulo = i * anguloIncremento;
+        float x = raio * cos(angulo);
+        float y = raio * sin(angulo);
+        glVertex3f(x, y, altura);
+    }
+    glEnd();
+
+    // Desenha lateral (tira de quads)
+    glBegin(GL_QUAD_STRIP);
+    for (int i = 0; i <= fatias; i++) {
+        float angulo = i * anguloIncremento;
+        float x = raio * cos(angulo);
+        float y = raio * sin(angulo);
+
+        glVertex3f(x, y, 0.0f);       // base
+        glVertex3f(x, y, altura);    // topo
+    }
+    glEnd();
+}
+
+void DesenharCilindroDiagonal(float raio, float altura, int fatias, float offsetX, float offsetY, float offsetZ) {
+    float ax = 0.0f, ay = 2.5f, az = 0.3f;
+    float cx = 1.9f, cy = 0.0f, cz = 0.3f;
+
+    // Vetor da hipotenusa AC
+    float dx = cx - ax;
+    float dy = cy - ay;
+    float dz = cz - az;
+
+    float comprimento = sqrt(dx*dx + dy*dy + dz*dz);
+    comprimento *= 0.8f; // reduz o comprimento do cilindro
+
+    // Meio do segmento (posição do cilindro)
+    float mx = (ax + cx) / 2.0f + offsetX;
+    float my = (ay + cy) / 2.0f + offsetY;
+    float mz = (az + cz) / 2.0f + offsetZ;
+
+    // Vetor unitário da hipotenusa
+    float vx = dx / comprimento;
+    float vy = dy / comprimento;
+    float vz = dz / comprimento;
+
+    // Calcula eixo e ângulo para rotacionar eixo z para vetor da hipotenusa
+    float rx = -vy;
+    float ry = vx;
+    float rz = 0;
+
+    float cosA = vz;
+    float angulo = acos(cosA) * 180.0f / 3.14159265f;
+
+    glPushMatrix();
+
+    glTranslatef(mx, my, mz);
+
+    if (!(rx == 0 && ry == 0 && rz == 0)) {
+        glRotatef(angulo, rx, ry, rz);
+    }
+
+    // Desenha o cilindro manual
+    DesenharCilindro(raio, comprimento, fatias);
+
+    glPopMatrix();
+}
+
+void DesenharChao() {
+    float raio = 2.5f;
+    float espessura = 0.2f;
+    int segmentos = 100;
+    float x = 0.5f, z = 0.25f; // centralizado com a torre
+    float y = -0.01f; // Abaixo da base da torre
+
+    glColor3f(0.3f, 0.3f, 0.3f); // cinza escuro (concreto)
+
+    // Parte superior
+    DesenhaCirculoHorizontal(x, y + espessura, z, raio, segmentos, 1, 0);
+
+    // Parte inferior
+    DesenhaCirculoHorizontal(x, y, z, raio, segmentos, 1, 0);
+
+    // Lateral da plataforma (como um cilindro horizontal)
+    glBegin(GL_QUAD_STRIP);
+    for (int i = 0; i <= segmentos; i++) {
+        float theta = 2.0f * M_PI * i / segmentos;
+        float dx = raio * cosf(theta);
+        float dz = raio * sinf(theta);
+
+        glVertex3f(x + dx, y, z + dz);                 // ponto na base
+        glVertex3f(x + dx, y + espessura, z + dz);     // ponto no topo
+    }
+    glEnd();
+}
+
 // Base vertical azul inclinada com profundidade
 void TorreBase() {
     float profundidade = 0.5f;
@@ -75,16 +257,16 @@ void TorreBase() {
     glColor3f(0.0f, 0.0f, 0.6f);
     glBegin(GL_QUADS);
     // Frente
-    glVertex3f(xOffset,        0.0f, 0.0f);
+    glVertex3f(xOffset, 0.0f, 0.0f);
     glVertex3f(xOffset + larguraBloco, 0.0f, 0.0f);
     glVertex3f(xOffset + larguraBloco, 3.0f, 0.0f);
-    glVertex3f(xOffset,        3.0f, 0.0f);
+    glVertex3f(xOffset, 3.0f, 0.0f);
 
     // Trás
-    glVertex3f(xOffset,        0.0f, profundidade);
+    glVertex3f(xOffset, 0.0f, profundidade);
     glVertex3f(xOffset + larguraBloco, 0.0f, profundidade);
     glVertex3f(xOffset + larguraBloco, 3.0f, profundidade);
-    glVertex3f(xOffset,        3.0f, profundidade);
+    glVertex3f(xOffset, 3.0f, profundidade);
 
     // Lado direito
     glVertex3f(xOffset + larguraBloco, 0.0f, 0.0f);
@@ -99,16 +281,18 @@ void TorreBase() {
     glVertex3f(xOffset, 3.0f, 0.0f);
     glEnd();
 
-    // Triângulo com profundidade
+    // Triângulo com profundidade elevado
     float zFrente = 0.4f;
     float zTras = 0.2f;
 
-    // Pontos da frente
-    float ax = 2.5f, ay = 0.0f;
-    float bx = 0.0f, by = 2.0f;
-    float cx = 0.0f, cy = 0.0f;
+    float deslocamentoY = 0.0f; // Altura do deslocamento para elevar o triângulo
 
-    // Frente
+    // Pontos da frente (elevados)
+    float ax = 0.0f, ay = 2.5f + deslocamentoY;
+    float bx = 0.0f, by = 0.0f + deslocamentoY;
+    float cx = 1.9f, cy = 0.0f + deslocamentoY;
+
+    // Frente do triângulo
     glColor3f(0.2f, 0.2f, 1.0f); // azul claro
     glBegin(GL_TRIANGLES);
     glVertex3f(ax, ay, zFrente);
@@ -116,7 +300,7 @@ void TorreBase() {
     glVertex3f(cx, cy, zFrente);
     glEnd();
 
-    // Trás
+    // Trás do triângulo
     glBegin(GL_TRIANGLES);
     glVertex3f(ax, ay, zTras);
     glVertex3f(bx, by, zTras);
@@ -125,7 +309,6 @@ void TorreBase() {
 
     // Lateral 1 (AB)
     glBegin(GL_QUADS);
-    glColor3f(0.6f, 0.6f, 0.6f); // cinza claro
     glVertex3f(ax, ay, zFrente);
     glVertex3f(ax, ay, zTras);
     glVertex3f(bx, by, zTras);
@@ -148,90 +331,40 @@ void TorreBase() {
     glVertex3f(ax, ay, zFrente);
     glEnd();
 
-    // Barras inclinadas intercaladas (amarela e cinza) na frente e atras do triângulo
-    DesenharGradesTriangulo(zFrente);
-    zFrente = 0.19f;
-    DesenharGradesTriangulo(zFrente);
-
+    // Grades inclinadas (frente e atrás)
+    DesenharGradesTriangulo(zFrente, deslocamentoY);
+    DesenharGradesTriangulo(0.19f, deslocamentoY);
+    DesenharCilindroDiagonal(0.05f, 0.05f, 30, -0.5f, 0.7f, 0.0f);
 }
 
-void DesenharGradesTriangulo(float zFrente) {
-    int n = 18;
-    float zGrades = zFrente + 0.002f;
-
-    for (int i = 0; i < n; i++) {
-        float y = 0.05f + i * (1.9f / n);
-
-        // Cálculo do limite máximo do triângulo nessa altura Y
-        float xMax = 2.5f * (1.0f - y / 2.0f);
-        float largura = xMax * 0.8f;
-        float x1 = xMax - largura;
-
-        if (i % 2 == 0)
-            glColor3f(1.0f, 1.0f, 0.4f); // amarelo
-        else
-            glColor3f(0.6f, 0.6f, 0.6f); // cinza
-
-        glBegin(GL_QUADS);
-        glVertex3f(x1, y - 0.03f, zGrades);
-        glVertex3f(xMax, y - 0.03f, zGrades);
-        glVertex3f(xMax, y + 0.03f, zGrades);
-        glVertex3f(x1, y + 0.03f, zGrades);
-        glEnd();
-    }
-}
 
 // Plataforma saliente com volume
 void Plataforma() {
-    float x, y, z, largura, altura, profundidade;
-    x = 0.4f; // Posição X
-    y = 2.0f;  // Posição Y
-    z = -0.1f;  // Posição Z
-    largura = 1.0f; // Largura da plataforma
-    altura = 0.2f; // Altura da plataforma
-    profundidade = 0.8f; // Profundidade da plataforma
+    float x = 1.0f;          // Centro em X
+    float y = 2.0f;          // Base Y da plataforma
+    float z = 0.2f;          // Centro em Z
+    float altura = 0.2f;     // Espessura (altura) da plataforma
+    float raio = 0.7f;       // Raio da plataforma
+    int segmentos = 100;
 
-    // Cor cinza para a plataforma
-    glColor3f(0.4f, 0.4f, 0.4f); // cinza
+    glColor3f(0.7f, 0.7f, 0.7f); // cinza
 
-    glBegin(GL_QUADS);
-    
-    // Topo
-    glVertex3f(x,         y,      z);
-    glVertex3f(x+largura, y,      z);
-    glVertex3f(x+largura, y+altura, z);
-    glVertex3f(x,         y+altura, z);
+    // Topo da plataforma (em y + altura)
+    DesenhaCirculoHorizontal(x, y + altura, z, raio, segmentos, 1, 0);
 
-    // Frente
-    glVertex3f(x,         y+altura, z);
-    glVertex3f(x+largura, y+altura, z);
-    glVertex3f(x+largura, y+altura, z+profundidade);
-    glVertex3f(x,         y+altura, z+profundidade);
+    // Base da plataforma (em y)
+    DesenhaCirculoHorizontal(x, y, z, raio, segmentos, 1, 0);
 
-    // Lado direito
-    glVertex3f(x+largura, y,      z);
-    glVertex3f(x+largura, y+altura, z);
-    glVertex3f(x+largura, y+altura, z+profundidade);
-    glVertex3f(x+largura, y,      z+profundidade);
+    // Lateral da plataforma (faixa entre topo e base)
+    glBegin(GL_QUAD_STRIP);
+    for (int i = 0; i <= segmentos; i++) {
+        float theta = 2.0f * M_PI * i / segmentos;
+        float dx = raio * cosf(theta);
+        float dz = raio * sinf(theta);
 
-    // Lado esquerdo
-    glVertex3f(x, y, z);
-    glVertex3f(x, y+altura, z);
-    glVertex3f(x, y+altura, z+profundidade);
-    glVertex3f(x, y, z+profundidade);
-    
-    // Parte inferior (opcional)
-    glVertex3f(x,         y, z+profundidade);
-    glVertex3f(x+largura, y, z+profundidade);
-    glVertex3f(x+largura, y, z);
-    glVertex3f(x,         y, z);
-    
-    // Traseira (opcional)
-    glVertex3f(x,         y, z+profundidade);
-    glVertex3f(x+largura, y, z+profundidade);
-    glVertex3f(x+largura, y+altura, z+profundidade);
-    glVertex3f(x,         y+altura, z+profundidade);
-
+        glVertex3f(x + dx, y, z + dz);           // ponto na base
+        glVertex3f(x + dx, y + altura, z + dz);  // ponto no topo
+    }
     glEnd();
 }
 
@@ -241,22 +374,19 @@ void DesenharLogoAvengers(float xOffset, float yOffset, float zOffset, float esc
     glTranslatef(xOffset, yOffset, zOffset);
     glScalef(escala, escala, 1.0f);
 
-    glColor3f(0.8f, 0.0f, 0.0f);
+    glEnable(GL_LINE_SMOOTH);
+    glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+
+    glColor3f(0.8f, 0.8f, 0.8f);
     float z = 0.01f;
 
-    // Círculo externo
+    // Círculo externo utilizando DesenhaCirculo
     glLineWidth(6.0f);
-    glBegin(GL_LINE_LOOP);
-    for (int i = 0; i < 100; i++) {
-        float ang = 2.0f * PI * i / 100;
-        float x = 0.8f * cos(ang);
-        float y = 0.8f * sin(ang);
-        glVertex3f(x, y, z);
-    }
-    glEnd();
+    DesenhaCirculo(0.0f, 0.0f, z, 0.8f, 100, 0, 1); // apenas contorno
 
+    glScalef(1.5f, 1.5f, 1.5f);
     // Letra A
-    glLineWidth(12.0f); // <- Aumenta a espessura do A
+    glLineWidth(12.0f);
     glBegin(GL_LINE_STRIP);
     glVertex3f(-0.3f, -0.5f, z);
     glVertex3f(0.0f, 0.5f, z);
@@ -335,6 +465,7 @@ void TopoInclinado() {
 
 // Desenhar a torre completa
 void DesenharTorre() {
+    DesenharChao();
     TorreBase();
     TorreGrades(-0.01f);
     Plataforma();
@@ -365,7 +496,6 @@ void Cena() {
 
     IniciarCamera();
 
-    DesenharEixos();
     DesenharTorre();
     EscreverTexto(-2.0f, 3.5f, 0.0f, "Gabriel Galdino - Torre dos Vingadores");
     glFlush();
@@ -397,7 +527,6 @@ void Mouse(int botao, int estado, int x, int y) {
         arrastando = 0;
     }
 }
-
 
 void ArrastarMouse(int x, int y) {
     if (arrastando) {
@@ -486,7 +615,7 @@ int main(int argc, char** argv) {
     glutInitWindowPosition(100, 100);
     glutCreateWindow("Torre dos Vingadores em 3D");
 
-    glClearColor(0.0, 0.0, 0.0, 1.0);
+    glClearColor(0.1f, 0.1f, 0.3f, 1.0f);
 
     glutDisplayFunc(Cena);
     glutMouseFunc(Mouse);
