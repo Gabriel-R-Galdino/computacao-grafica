@@ -5,6 +5,17 @@ O objetivo é desenvolver uma **Torre 3D dos Vingadores**, utilizando **OpenGL (
 
 ---
 
+## 🖼️ Exemplo Visual
+
+Confira abaixo uma prévia visual do projeto Torre dos Vingadores:
+
+<img width="516" height="516" alt="image" src="https://github.com/user-attachments/assets/6ba7723a-a7e0-4e89-bba8-d95c8dea4fc1" />
+
+[Visualização em 3D no Cults3D](https://cults3d.com/pt/modelo-3d/jogo/torre-avengers-seba_antihuala?srsltid=AfmBOopS282c48acqA6f1zbTn4uRYPM7TdWSCYjdgKsKC7HGuPlMkm7g)
+[Modelo interativo no Sketchfab](https://sketchfab.com/3d-models/the-avengers-tower-c9bcc0bad326433ea201a2d82aff581d)
+
+---
+
 ## 🗂️ Estrutura de Pastas
 
 ```
@@ -103,7 +114,7 @@ A torre é composta por:
 - Câmera interativa com rotação, zoom e elevação
 - Limites para impedir zoom exagerado ou ângulo de câmera irreal
 - Interação fluida via mouse + teclado
-- Logo dos Vingadores desenhado com OpenGL (sem texturas)
+- Logo dos Vingadores desenhado com OpenGL
 
 ---
 
